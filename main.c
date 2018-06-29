@@ -1,6 +1,7 @@
 #include <stm32f10x_conf.h>
 
 
+
 void TIM4_IRQHandler(void)
 {
         if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
@@ -13,40 +14,68 @@ void TIM4_IRQHandler(void)
 
 int main(void)
 {
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
 
     /* Initialize LED which connected to PC13 */
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    GPIO_InitTypeDef  gpio;
     // Enable PORTC Clock
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO, ENABLE);
     /* Configure the GPIO_LED pin */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    gpio.GPIO_Pin = GPIO_Pin_13;
+    gpio.GPIO_Mode = GPIO_Mode_Out_PP;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &gpio);
 
     GPIO_ResetBits(GPIOC, GPIO_Pin_13); // Set C13 to Low level ("0")
 
     // TIMER4
-    TIM_TimeBaseInitTypeDef TIMER_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    TIM_TimeBaseInitTypeDef Timer;
+    NVIC_InitTypeDef nvic;
 
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-
-    TIM_TimeBaseStructInit(&TIMER_InitStructure);
-    TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIMER_InitStructure.TIM_Prescaler =8000;
-    TIMER_InitStructure.TIM_Period = 500;
-    TIM_TimeBaseInit(TIM4, &TIMER_InitStructure);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+#if 0
+    TIM_TimeBaseStructInit(&Timer);
+    Timer.TIM_CounterMode = TIM_CounterMode_Up;
+    Timer.TIM_Prescaler =8000;
+    Timer.TIM_Period = 500;
+    //Timer.TIM_
+    TIM_TimeBaseInit(TIM4, &Timer);
     TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
     TIM_Cmd(TIM4, ENABLE);
+#endif
+
+    gpio.GPIO_Pin = GPIO_Pin_0;
+    gpio.GPIO_Mode = GPIO_Mode_AF_PP;
+    gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &gpio);
+
+    TIM_TimeBaseStructInit(&Timer);
+        Timer.TIM_CounterMode = TIM_CounterMode_Up;
+        Timer.TIM_Prescaler =(SystemCoreClock/1000000)-1;
+        Timer.TIM_Period = 100;
+        //Timer.TIM_
+        TIM_TimeBaseInit(TIM3, &Timer);
+
+
+        TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+           TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+           TIM_OCInitStructure.TIM_Pulse = 50;
+           TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+           TIM_OC3Init(TIM3, &TIM_OCInitStructure);
+
+           TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+           TIM_Cmd(TIM3, ENABLE);
+
 
     /* NVIC Configuration */
     /* Enable the TIM4_IRQn Interrupt */
-    NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
+    nvic.NVIC_IRQChannel = TIM4_IRQn;
+    nvic.NVIC_IRQChannelPreemptionPriority = 0;
+    nvic.NVIC_IRQChannelSubPriority = 0;
+    nvic.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic);
 
     while(1)
     {
