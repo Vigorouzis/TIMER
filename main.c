@@ -44,29 +44,57 @@ int main(void)
     TIM_Cmd(TIM4, ENABLE);
 #endif
 
-    gpio.GPIO_Pin = GPIO_Pin_0;
-    gpio.GPIO_Mode = GPIO_Mode_AF_PP;
-    gpio.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB, &gpio);
 
-    TIM_TimeBaseStructInit(&Timer);
-        Timer.TIM_CounterMode = TIM_CounterMode_Up;
-        Timer.TIM_Prescaler =(SystemCoreClock/1000000)-1;
-        Timer.TIM_Period = 100;
-        //Timer.TIM_
-        TIM_TimeBaseInit(TIM3, &Timer);
+	gpio.GPIO_Pin = GPIO_Pin_0;
+    	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
+    	gpio.GPIO_Speed = GPIO_Speed_50MHz;
+    	GPIO_Init(GPIOB, &gpio);
+
+    	TIM_TimeBaseStructInit(&Timer);
+    	Timer.TIM_CounterMode = TIM_CounterMode_Up;
+    	Timer.TIM_Prescaler =(SystemCoreClock/1000000)-1;
+    	Timer.TIM_Period = 100;
+    	TIM_TimeBaseInit(TIM3, &Timer);
 
 
-        TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-           TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-           TIM_OCInitStructure.TIM_Pulse = 50;
-           TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+    	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+        TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+        TIM_OCInitStructure.TIM_Pulse = 100;
+        TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-           TIM_OC3Init(TIM3, &TIM_OCInitStructure);
+        TIM_OC3Init(TIM3, &TIM_OCInitStructure);
 
-           TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
+        TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
-           TIM_Cmd(TIM3, ENABLE);
+       TIM_Cmd(TIM3, ENABLE);
+
+    	gpio.GPIO_Pin = GPIO_Pin_1;
+        	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
+        	gpio.GPIO_Speed = GPIO_Speed_50MHz;
+        	GPIO_Init(GPIOB, &gpio);
+
+        	TIM_TimeBaseStructInit(&Timer);
+        	Timer.TIM_CounterMode = TIM_CounterMode_Up;
+        	Timer.TIM_Prescaler =(SystemCoreClock/1000000)-1;
+        	Timer.TIM_Period = 100;
+        	TIM_TimeBaseInit(TIM3, &Timer);
+
+
+        	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+            TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+            TIM_OCInitStructure.TIM_Pulse = 100;
+            TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+            TIM_OC4Init(TIM3, &TIM_OCInitStructure);
+
+            TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+            TIM_Cmd(TIM3, ENABLE);
+
+
+
+
+
 
 
     /* NVIC Configuration */
