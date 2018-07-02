@@ -19,7 +19,7 @@ int main(void)
     /* Initialize LED which connected to PC13 */
     GPIO_InitTypeDef  gpio;
     // Enable PORTC Clock
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOA|RCC_APB2Periph_AFIO, ENABLE);
     /* Configure the GPIO_LED pin */
     gpio.GPIO_Pin = GPIO_Pin_13;
     gpio.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -44,7 +44,7 @@ int main(void)
     TIM_Cmd(TIM4, ENABLE);
 #endif
 
-
+    //Blue
 	gpio.GPIO_Pin = GPIO_Pin_0;
     	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
     	gpio.GPIO_Speed = GPIO_Speed_50MHz;
@@ -68,6 +68,9 @@ int main(void)
 
        TIM_Cmd(TIM3, ENABLE);
 
+
+       //Red
+
     	gpio.GPIO_Pin = GPIO_Pin_1;
         	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
         	gpio.GPIO_Speed = GPIO_Speed_50MHz;
@@ -88,6 +91,31 @@ int main(void)
             TIM_OC4Init(TIM3, &TIM_OCInitStructure);
 
             TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+            TIM_Cmd(TIM3, ENABLE);
+
+            //Green
+
+            gpio.GPIO_Pin = GPIO_Pin_6;
+            gpio.GPIO_Mode = GPIO_Mode_AF_PP;
+            gpio.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_Init(GPIOA, &gpio);
+
+            TIM_TimeBaseStructInit(&Timer);
+            Timer.TIM_CounterMode = TIM_CounterMode_Up;
+            Timer.TIM_Prescaler =(SystemCoreClock/1000000)-1;
+            Timer.TIM_Period = 100;
+            TIM_TimeBaseInit(TIM3, &Timer);
+
+
+            TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+            TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+            TIM_OCInitStructure.TIM_Pulse = 100;
+            TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+            TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+
+            TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
             TIM_Cmd(TIM3, ENABLE);
 
